@@ -17,6 +17,7 @@ app.post('/todos',(req,res) => {
     todo.save().then((result) => {
         res.send(result);    
     },(error) => {
+        res.status(400);
         res.send(error);
     });
 });
@@ -26,3 +27,4 @@ app.listen(3000, () => {
 });
 
 
+module.exports = { app };

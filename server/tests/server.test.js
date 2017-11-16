@@ -99,3 +99,30 @@ describe('GET /todos/:id' , () => {
             .end(done);
     });
 });
+
+
+describe('DELETE /todos/:id', () => {
+    it('should delete the todo by id',(done) => {
+        request(app)
+            .delete(`/todos/${todos[0]._id.toHexString()}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.result.text).toBe(todos[0].text);
+            })
+            .end(done);
+    });
+
+    it('should return 400 if todo is not found',(done) => {
+        request(app)
+            .delete(`/todos/${new ObjectID().toHexString()}`)
+            .expect(400)
+            .end(done);
+    });
+
+    it('should return 400 if todo is not found',(done) => {
+        request(app)
+            .delete('/todos/1234f')
+            .expect(500)
+            .end(done);
+    });
+})

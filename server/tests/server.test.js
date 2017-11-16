@@ -7,11 +7,13 @@ const { Todo } = require('./../models/todo');
 const todos = [
     {
         _id : new ObjectID(),
-        text : 'first test todo'
+        text : 'first test todo',
+        completed : false
     },
     {
         _id : new ObjectID(),
-        text : 'Second test'
+        text : 'Second test',
+        completed : true
     }
 ];
 
@@ -125,4 +127,33 @@ describe('DELETE /todos/:id', () => {
             .expect(500)
             .end(done);
     });
-})
+});
+
+
+describe('UPDATE /todos/:id', (done) => {
+    it('should update the todo by id', (done) => {
+        request(app)
+            .patch(`/todos/${todos[0]._id.toHexString()}`)
+            .send({ completed : !todos[0].completed })
+            .expect(200)
+            .expect((res) => {                
+                expect(res.body.result.completed).toBe(!todos[0].completed);
+            })            
+            .end(done);
+    });
+
+    it('should return 400 if todo is not found',(done) => {
+        request(app)
+            .patch(`/todos/${new ObjectID().toHexString()}`)
+            .expect(400)
+            .end(done);
+    });
+
+    it('should return 400 if todo is not found',(done) => {
+        request(app)
+            .patch('/todos/1234f')
+            .expect(500)
+            .end(done);
+    });
+});
+

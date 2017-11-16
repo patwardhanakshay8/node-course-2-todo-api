@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var { ObjectID } = require('mongodb');
@@ -76,7 +78,40 @@ app.delete('/todos/:id',(req,res) => {
         res.status(500);
         res.send('ID is not valid');
     }
-})
+});
+
+app.patch('/todos/:id', (req, res) => {
+    if(ObjectID.isValid(req.params.id)) {
+        var body = _.pick(req.body,['text','completed']);
+
+        if (_.isBoolean(body.completed) && body.completed) {
+            body.completedAt = new Date().getTime();            
+        } else {
+            body.completed = false;
+            body.completedAt = null;
+        }
+
+        Todo.findByIdAndUpdate(req.params.id, {$set : body}, { new : true })
+            .then((result) => {
+                if (!result) {
+                    res.status(400);
+                    res.send('To do not found.');                    
+                }
+                else {
+                    res.status(200);
+                    res.send({ result });
+                }
+            },(error) => {
+                res.status(400);
+                res.send(error);
+            });
+
+    }
+    else {
+        res.status(500);
+        res.send('ID is not valid');
+    }
+});
 
 app.listen(port, () => {
     console.log(`Started on ${ port }`);

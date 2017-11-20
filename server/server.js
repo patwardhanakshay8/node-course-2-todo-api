@@ -130,6 +130,20 @@ app.post('/users/', (req,res) =>{
     })    
 });
 
+app.post('/users/login', (req,res) => {
+    var user = _.pick(req.body,['email','password']);    
+    
+    User.findByCredentials(user.email,user.password).then((user) => {
+        return user.generateAuthToken().then((token) => {
+            res.header('x-auth',token);
+            res.send(user);
+        });
+    }).catch((e) => {
+        res.status(400);
+        res.send();
+    });
+});
+
 app.get('/users/me', authenticate, (req,res) => {
     res.send(req.user);
 });

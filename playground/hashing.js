@@ -38,3 +38,20 @@ console.log(token);
 
 var decoded = jwt.verify(token,'123abc');
 console.log(decoded);
+
+
+const bcrypt = require('bcryptjs');
+
+var  password = '123abc!';
+
+bcrypt.genSalt(10, (err,salt) => {
+    bcrypt.hash(password,salt,(err,hash) => {
+        console.log(hash);
+    });
+});
+
+var hashedPassword = '$2a$10$bOsi0n1VdKhDHiF1agoATOUY1WVADZBas/1EmxiqTtRa8AdMBZTtK';
+
+bcrypt.compare(password,hashedPassword, (err,res) => {
+    console.log(res);
+});
